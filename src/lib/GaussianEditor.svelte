@@ -1,18 +1,21 @@
-<script>
+<script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 	export let selectedGaussian;
 
-	let gaussian = {
-		center: selectedGaussian.center || 0,
-		height: selectedGaussian.height || 0,
-		width: selectedGaussian.width || 0
-	};
+	let width = selectedGaussian.width;
+	let center = selectedGaussian.center;
+	let height = selectedGaussian.height;
+
+    $: {
+        width = selectedGaussian.width;
+        center = selectedGaussian.center;
+        height = selectedGaussian.height;
+    }
 
 	const dispatch = createEventDispatcher();
 
 	function updateObject(event) {
-		selectedGaussian = { ...gaussian };
-		dispatch('update', selectedGaussian);
+		dispatch('update', { width, center, height });
 	}
 </script>
 
@@ -23,7 +26,7 @@
 		id="center"
 		min="0"
 		max="256"
-		bind:value={gaussian.center}
+		bind:value={selectedGaussian.center}
 		on:input={updateObject}
 	/>
 </div>
@@ -35,7 +38,7 @@
 		id="height"
 		min="0"
 		max="256"
-		bind:value={gaussian.height}
+		bind:value={selectedGaussian.height}
 		on:input={updateObject}
 	/>
 </div>
@@ -47,7 +50,7 @@
 		id="width"
 		min="0"
 		max="256"
-		bind:value={gaussian.width}
+		bind:value={selectedGaussian.width}
 		on:input={updateObject}
 	/>
 </div>
