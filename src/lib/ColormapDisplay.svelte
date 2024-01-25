@@ -74,17 +74,16 @@
 
 <div class="w-full h-64 relative">
 	<canvas bind:this={canvas} class="w-full h-full absolute inset-0 z-0"/>
-	<svg bind:this={svg} class="w-full h-full absolute inset-0 z-10" viewBox="0 0 1 1">
+	<svg bind:this={svg} preserveAspectRatio="none" class="w-full h-full absolute inset-0 z-10" viewBox="0 0 1 1">
 		{#each gaussians as item, index}
 			<g id="gaussian-{index}">
 				<line
 					x1={item.center}
-					y1="0"
+					y1="0.0"
 					x2={item.center}
-					y2="1"
-					width="0.01"
+					y2="1.0"
 					stroke="white"
-					stroke-width="0.01"
+					stroke-width="0.005"
 					aria-label="Draggable line"
 					aria-grabbed={dragging}
 					role="slider"
