@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { type IGaussian } from '$lib';
+	import { type IGaussian } from '$lib';
 	export let gaussians: IGaussian[] = [];
 	let initialized = false;
 	let svg: SVGSVGElement;
@@ -13,6 +13,7 @@
 	}
 
 	let canvas: HTMLCanvasElement;
+	let dragIndex = 0;
 
 	function drawCurves(gaussians: IGaussian[]) {
 		const ctx: CanvasRenderingContext2D | null = canvas.getContext('2d');
@@ -43,57 +44,77 @@
 	let x = 0.5;
 	let y = 0.5;
 
-	function startDrag(event: MouseEvent) {
+	function startDrag(event: MouseEvent, index: number) {
+		console.log('Starting drag');
 		dragging = true;
 		event.preventDefault();
+		dragIndex = index;
 	}
 
 	function doDrag(event: MouseEvent) {
 		if (dragging) {
-			if(!svg) return;
+			if (!svg) return;
 			let point = svg.createSVGPoint();
 			point.x = event.clientX;
 			point.y = event.clientY;
 			let ctm = svg.getScreenCTM();
 			if (!ctm) return;
 			let transformed = point.matrixTransform(ctm.inverse());
-			x = transformed.x;
+			gaussians[dragIndex].center = transformed.x;
 			y = transformed.y;
+			gaussians = [...gaussians];
 		}
 	}
 	function stopDrag(event: MouseEvent) {
+		console.log('Stopping', event);
 		dragging = false;
+	}
+
+	let dimensions: DOMRect | null;
+
+	function getDimensions() {
+		dimensions = svg.getBoundingClientRect();
 	}
 
 	$: {
 		if (canvas) {
+			getDimensions();
 			drawCurves(gaussians);
 		}
 	}
 </script>
+<p>{dimensions?.width}</p>
+<p>{dimensions?.height}</p>
 
 <div class="w-full h-64 relative">
-	<canvas bind:this={canvas} class="w-full h-full absolute inset-0 z-0"/>
-	<svg bind:this={svg} preserveAspectRatio="none" class="w-full h-full absolute inset-0 z-10" viewBox="0 0 1 1">
+	<canvas bind:this={canvas} class="w-full h-full absolute inset-0 z-0" />
+	<svg
+		bind:this={svg}
+		class="w-full h-full absolute inset-0 z-10"
+		on:mouseleave={stopDrag}
+		on:mousemove={doDrag}
+		on:mouseup={stopDrag}
+		on:blur={stopDrag}
+		tabindex="-1"
+		role="figure"
+	>
 		{#each gaussians as item, index}
 			<g id="gaussian-{index}">
 				<line
-					x1={item.center}
-					y1="0.0"
-					x2={item.center}
-					y2="1.0"
+					x1={dimensions?.width * item.center}
+					y1={dimensions?.height * (1.0 - item.height)}
+					x2={dimensions?.width * item.center}
+					y2={dimensions?.height}
 					stroke="white"
-					stroke-width="0.005"
+					stroke-width="3"
 					aria-label="Draggable line"
 					aria-grabbed={dragging}
 					role="slider"
 					aria-valuenow={item.center}
-					tabindex=0
-					on:mousedown={startDrag}
-					on:mousemove={doDrag}
-					on:mouseup={stopDrag}
-					on:mouseleave={stopDrag}
+					tabindex="0"
+					on:mousedown={(event) => startDrag(event, index)}
 				/>
+				<circle cx={dimensions?.width * item.center} cy={dimensions?.height * (1.0 - item.height)} r="5" fill="white"/>
 			</g>
 		{/each}
 	</svg>
