@@ -15,6 +15,11 @@
         gaussians[itemIndex] = selectedGaussian;
         gaussians = [...gaussians];
     }
+    function handleIndexUpdate(event: CustomEvent<number>) {
+        console.log("Handle index update", event, event.detail);
+        selectGaussian(event.detail);
+    }
+
     function addGaussian() {
         const newGaussian = {width: 0.5, center: 0.5, height: 0.2};
         gaussians = [...gaussians, newGaussian];
@@ -34,6 +39,7 @@
 	{/each}
 </select>
     <button type="button" class="btn btn-sm variant-filled m-2" on:click={addGaussian}>Add Gaussian</button>
-    <GaussianEditor {selectedGaussian} on:update={handleUpdate} />
+    <GaussianEditor {selectedGaussian} 
+    on:update={handleUpdate} />
 </div>
-<div class="w-2/3"><ColormapDisplay {gaussians}/></div>
+<div class="w-2/3"><ColormapDisplay {gaussians} on:updateIndex={handleIndexUpdate}/></div>

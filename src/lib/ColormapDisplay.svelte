@@ -1,4 +1,5 @@
 <script lang="ts">
+	import {createEventDispatcher} from 'svelte';
 	import { type IGaussian } from '$lib';
 	export let gaussians: IGaussian[] = [];
 	let initialized = false;
@@ -11,9 +12,10 @@
 		const b = Math.floor(255 * x);
 		return `rgb(${r}, 0, ${b})`;
 	}
+	const dispatch = createEventDispatcher();
 
 	let canvas: HTMLCanvasElement;
-	let dragIndex = 0;
+	let dragIndex: number = 0;
 
 	function drawCurves(gaussians: IGaussian[]) {
 		const ctx: CanvasRenderingContext2D | null = canvas.getContext('2d');
@@ -53,6 +55,7 @@
 		draggingWidth = true;
 		draggingCenter = false;
 		dragIndex = index;
+		dispatch('updateIndex', dragIndex);
 		event.preventDefault();
 	}
 
@@ -60,6 +63,7 @@
 		draggingCenter = true;
 		draggingWidth = false;
 		dragIndex = index;
+		dispatch('updateIndex', dragIndex);
 		event.preventDefault();
 	}
 
@@ -107,7 +111,6 @@
 	};
 
 	function getDimensions(svg: SVGSVGElement) {
-		console.log('Getting dimensions');
 		dimensions = svg.getBoundingClientRect();
 	}
 
