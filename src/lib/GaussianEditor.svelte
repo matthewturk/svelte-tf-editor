@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
-	export let selectedGaussian;
+    import { type IGaussian } from '$lib';
+	export let selectedGaussian: IGaussian;
 
 	let width = selectedGaussian.width;
 	let center = selectedGaussian.center;
@@ -14,7 +15,7 @@
 
 	const dispatch = createEventDispatcher();
 
-	function updateObject(event) {
+	function updateObject(event: Event) {
 		dispatch('update', { width, center, height });
 	}
 </script>
