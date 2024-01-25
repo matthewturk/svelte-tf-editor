@@ -25,12 +25,12 @@
 
 		for (const gaussian of gaussians) {
 			const { width, height, center } = gaussian;
-			const startX = center - width / 2;
-			const endX = center + width / 2;
+			const startX = canvas.width * (center - width / 2);
+			const endX = canvas.width * (center + width / 2);
 
 			for (let x = startX; x <= endX; x += 1) {
 				const t = (x - startX) / (endX - startX);
-				const y = height * (1 - (2 * t - 1) ** 2);
+				const y = canvas.height * height * (1 - (2 * t - 1) ** 2);
 
 				ctx.fillStyle = getColor(x / canvas.width);
 				ctx.fillRect(x, 0, 1, y);
@@ -40,8 +40,8 @@
 	}
 
 	let dragging = false;
-	let x = 50;
-	let y = 50;
+	let x = 0.5;
+	let y = 0.5;
 
 	function startDrag(event: MouseEvent) {
 		dragging = true;
@@ -72,18 +72,19 @@
 	}
 </script>
 
-<div style="position: relative;">
-	<canvas bind:this={canvas} />
-	<svg bind:this={svg}>
+<div class="w-full h-64 relative">
+	<canvas bind:this={canvas} class="w-full h-full absolute inset-0 z-0"/>
+	<svg bind:this={svg} class="w-full h-full absolute inset-0 z-10" viewBox="0 0 1 1">
 		{#each gaussians as item, index}
 			<g id="gaussian-{index}">
 				<line
 					x1={item.center}
 					y1="0"
 					x2={item.center}
-					y2="256"
+					y2="1"
+					width="0.01"
 					stroke="white"
-					stroke-width="3"
+					stroke-width="0.01"
 					aria-label="Draggable line"
 					aria-grabbed={dragging}
 					role="slider"
@@ -98,22 +99,3 @@
 		{/each}
 	</svg>
 </div>
-
-<style>
-	canvas {
-		width: 512px;
-		height: 256px;
-		position: absolute;
-		left: 0;
-		top: 0;
-		z-index: 0;
-	}
-	svg {
-		width: 512px;
-		height: 256px;
-		position: absolute;
-		left: 0;
-		top: 0;
-		z-index: 1;
-	}
-</style>

@@ -26,7 +26,8 @@
 		type="range"
 		id="center"
 		min="0"
-		max="256"
+		max="1.0"
+		step="0.01"
 		bind:value={selectedGaussian.center}
 		on:input={updateObject}
 	/>
@@ -38,7 +39,8 @@
 		type="range"
 		id="height"
 		min="0"
-		max="256"
+		max="1.0"
+		step="0.01"
 		bind:value={selectedGaussian.height}
 		on:input={updateObject}
 	/>
@@ -50,7 +52,8 @@
 		type="range"
 		id="width"
 		min="0"
-		max="256"
+		max="1.0"
+		step="0.01"
 		bind:value={selectedGaussian.width}
 		on:input={updateObject}
 	/>

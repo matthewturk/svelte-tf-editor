@@ -3,7 +3,7 @@
 	import GaussianEditor from './GaussianEditor.svelte';
     import { type IGaussian } from '$lib';
 	export let gaussians: IGaussian[] = [
-        { width: 50, center: 50, height: 20 }
+        { width: 0.5, center: 0.5, height: 0.2 }
     ];
 
     import ColormapDisplay from './ColormapDisplay.svelte';
@@ -16,7 +16,7 @@
         gaussians = [...gaussians];
     }
     function addGaussian() {
-        const newGaussian = {width: 50, center:50, height: 20};
+        const newGaussian = {width: 0.5, center: 0.5, height: 0.2};
         gaussians = [...gaussians, newGaussian];
         selectedGaussian = newGaussian;
         itemIndex = gaussians.length - 1;
@@ -27,7 +27,7 @@
     }
 </script>
 
-<div>
+<div class="w-1/3">
  <select class="select" bind:value={itemIndex}>
 	{#each gaussians as item, index}
     <option value={index}>{index}: {item.width}, {item.center}, {item.height}</option>
@@ -36,12 +36,4 @@
     <button type="button" class="btn btn-sm variant-filled m-2" on:click={addGaussian}>Add Gaussian</button>
     <GaussianEditor {selectedGaussian} on:update={handleUpdate} />
 </div>
-<div><ColormapDisplay {gaussians}/></div>
-
-<style>
-	.item {
-		border: 1px solid black;
-		margin-bottom: 10px;
-		padding: 10px;
-	}
-</style>
+<div class="w-2/3"><ColormapDisplay {gaussians}/></div>
