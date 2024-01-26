@@ -125,7 +125,7 @@
 	}
 </script>
 
-<div class="w-full h-64 relative">
+<div class="w-full h-64 relative border-solid border-2 border-secondary-400 rounded">
 	<canvas bind:this={canvas} class="w-full h-full absolute inset-0 z-0" />
 	<svg
 		bind:this={svg}
