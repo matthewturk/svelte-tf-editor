@@ -2,6 +2,7 @@
 	import { RangeSlider } from '@skeletonlabs/skeleton';
 	import { createEventDispatcher } from 'svelte';
 	import { type IGaussian } from '$lib';
+	import * as d3Chromatic from 'd3-scale-chromatic';
 	export let selectedGaussian: IGaussian;
 
 	let width = selectedGaussian.width;

@@ -1,17 +1,15 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 	import { type IGaussian } from '$lib';
+	import { scaleSequential } from 'd3-scale';
+	import * as d3Chromatic from 'd3-scale-chromatic';
 	export let gaussians: IGaussian[] = [];
-	let initialized = false;
 	let svg: SVGSVGElement;
 
-	function getColor(x: number) {
-		// Define your color mapping function here
-		// Example: linearly interpolate between red and blue
-		const r = Math.floor(255 * (1 - x));
-		const b = Math.floor(255 * x);
-		return `rgb(${r}, 0, ${b})`;
-	}
+	let color: (x: number) => string = (x) => 'rgb(0, 0, 0)';
+
+	export let colorMap: string = 'Viridis';
+
 	const dispatch = createEventDispatcher();
 
 	let canvas: HTMLCanvasElement;
@@ -35,7 +33,7 @@
 				const t = (x - startX) / (endX - startX);
 				const y = canvas.height * height * (1 - (2 * t - 1) ** 2);
 
-				ctx.fillStyle = getColor(x / canvas.width);
+				ctx.fillStyle = color(x / canvas.width);
 				ctx.fillRect(x, 0, 1, y);
 			}
 		}
@@ -119,6 +117,7 @@
 
 	$: {
 		if (canvas) {
+			color = scaleSequential(d3Chromatic[`interpolate${colorMap}`]);
 			getDimensions(svg);
 			drawCurves(gaussians);
 		}
