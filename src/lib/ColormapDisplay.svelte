@@ -1,5 +1,5 @@
 <script lang="ts">
-	import {createEventDispatcher} from 'svelte';
+	import { createEventDispatcher } from 'svelte';
 	import { type IGaussian } from '$lib';
 	export let gaussians: IGaussian[] = [];
 	let initialized = false;
@@ -88,10 +88,13 @@
 			if (!ctm) return;
 			let transformed = point.matrixTransform(ctm.inverse());
 			gaussians[dragIndex].width = Math.abs(
-				2*(gaussians[dragIndex].center - transformed.x / dimensions?.width)
+				2 * (gaussians[dragIndex].center - transformed.x / dimensions?.width)
 			);
-			gaussians = [...gaussians];
+		} else {
+			return;
 		}
+		gaussians = [...gaussians];
+		dispatch('update', gaussians[dragIndex]);
 	}
 	function stopDrag(event: Event) {
 		draggingCenter = false;

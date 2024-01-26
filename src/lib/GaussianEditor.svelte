@@ -1,4 +1,5 @@
 <script lang="ts">
+    import {RangeSlider} from '@skeletonlabs/skeleton';
 	import { createEventDispatcher } from 'svelte';
     import { type IGaussian } from '$lib';
 	export let selectedGaussian: IGaussian;
@@ -20,48 +21,25 @@
 	}
 </script>
 
-<div class="slider">
-	<label for="center">Center:</label>
-	<input
-		type="range"
-		id="center"
-		min="0"
-		max="1.0"
-		step="0.01"
-		bind:value={selectedGaussian.center}
-		on:input={updateObject}
-	/>
-</div>
 
-<div class="slider">
-	<label for="height">Height:</label>
-	<input
-		type="range"
-		id="height"
-		min="0"
-		max="1.0"
-		step="0.01"
-		bind:value={selectedGaussian.height}
-		on:input={updateObject}
-	/>
-</div>
-
-<div class="slider">
-	<label for="width">Width:</label>
-	<input
-		type="range"
-		id="width"
-		min="0"
-		max="1.0"
-		step="0.01"
-		bind:value={selectedGaussian.width}
-		on:input={updateObject}
-	/>
-</div>
-
-<style>
-	.slider {
-		width: 100%;
-		margin-bottom: 1rem;
-	}
-</style>
+<RangeSlider name="range-slider-center" bind:value={selectedGaussian.center}
+max={1.0} step={0.01} min={0.0} ticked on:change={updateObject}>
+	<div class="flex justify-between items-center">
+		<div class="font-bold">Center</div>
+		<div class="text-xs">{selectedGaussian.center}</div>
+	</div>
+</RangeSlider>
+<RangeSlider name="range-slider-height" bind:value={selectedGaussian.height}
+max={1.0} step={0.01} min={0.0} ticked on:change={updateObject}>
+	<div class="flex justify-between items-center">
+		<div class="font-bold">Height</div>
+		<div class="text-xs">{selectedGaussian.height}</div>
+	</div>
+</RangeSlider>
+<RangeSlider name="range-slider-width" bind:value={selectedGaussian.width}
+max={1.0} step={0.01} min={0.0} ticked on:change={updateObject}>
+	<div class="flex justify-between items-center">
+		<div class="font-bold">Width</div>
+		<div class="text-xs">{selectedGaussian.width}</div>
+	</div>
+</RangeSlider>

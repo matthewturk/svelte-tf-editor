@@ -16,7 +16,6 @@
         gaussians = [...gaussians];
     }
     function handleIndexUpdate(event: CustomEvent<number>) {
-        console.log("Handle index update", event, event.detail);
         selectGaussian(event.detail);
     }
 
@@ -42,4 +41,4 @@
     <GaussianEditor {selectedGaussian} 
     on:update={handleUpdate} />
 </div>
-<div class="w-2/3"><ColormapDisplay {gaussians} on:updateIndex={handleIndexUpdate}/></div>
+<div class="w-2/3"><ColormapDisplay {gaussians} on:updateIndex={handleIndexUpdate} on:update={handleUpdate}/></div>
