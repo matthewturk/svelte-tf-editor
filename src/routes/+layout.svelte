@@ -59,6 +59,8 @@
 			</svelte:fragment>
 		</AppBar>
 	</svelte:fragment>
-	<!-- Page Route Content -->
-	<slot />
+	<div class="container flex items-start mx-auto p-8 w-full h-full">
+		<!-- Page Route Content -->
+		<slot />
+	</div>
 </AppShell>
