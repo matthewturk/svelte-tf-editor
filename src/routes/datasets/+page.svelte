@@ -5,6 +5,7 @@
 	import prettyBytes from 'pretty-bytes';
 	import { type Readable, writable } from 'svelte/store';
 	import { DataHandler, Datatable, Th, ThFilter, type Row, type Field } from '@vincjo/datatables';
+	import type { GirderCollection, GirderCollectionDetails } from '$lib/girder';
 
 	const girderUrl = 'https://girder.hub.yt/api/v1';
 
@@ -12,6 +13,7 @@
 	let rows: Readable<any[]>;
 	let selected = writable<string>('');
 	let description = '';
+	let detailInfo: GirderCollectionDetails | null;
 
 	async function getCollections() {
 		const response = await fetch(`${girderUrl}/collection`);
@@ -38,18 +40,16 @@
 
 		return typedArray;
 	}
-
 	onMount(async () => {
 		try {
 			collections = await getCollections();
 		} catch (error) {
 			console.error(error);
 		}
-		handler = new DataHandler(collections, { rowsPerPage: 20 });
+		handler = new DataHandler(collections, { rowsPerPage: 10 });
 		rows = handler.getRows();
+		console.log($rows);
 	});
-
-	import type { GirderCollection } from '$lib/girder';
 
 	// Replace with your Girder instance URL and collection ID
 	const collectionId = 'your_collection_id';
@@ -57,7 +57,7 @@
 	async function getCollectionDetails() {
 		// Get the folders in the collection
 		const response = await fetch(`${girderUrl}/collection/${collectionId}/details`);
-		const collectionDetails: GirderCollection = await response.json();
+		const collectionDetails: GirderCollectionDetails = await response.json();
 
 		// Print the number of folders and size of the collection
 		console.log(`Number of folders: ${collectionDetails.nFolders}`);
@@ -66,7 +66,7 @@
 </script>
 
 <div class="container flex mx-auto space-y-8 w-full">
-	<div class="w-1/2 p-2 m-2">
+	<div class="w-1/2 p-2 m-2 h-full">
 		<h1 class="m-2">Collections</h1>
 		{#if handler}
 			<Datatable {handler}>
@@ -92,6 +92,7 @@
 									if ($selected == row._id) {
 										$selected = '';
 										description = '';
+										detailInfo = null;
 									} else {
 										$selected = row._id;
 										description = row.description;
@@ -108,7 +109,12 @@
 			</Datatable>
 		{/if}
 	</div>
-	<div class="w-1/2 p-2 m-1">
-		<SvelteMarkdown source={description} />
+	<div class="w-1/2 p-2 m-1 h-dvh">
+		<div class="w-full p-1 m-1 h-32">
+			{#if detailInfo}{/if}
+		</div>
+		<div class="w-full p-1 m-1 h-3/4 overflow-scroll bg-surface-500">
+			<SvelteMarkdown source={description} />
+		</div>
 	</div>
 </div>
