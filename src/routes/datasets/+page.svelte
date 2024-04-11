@@ -1,11 +1,17 @@
 <script lang="ts">
 	import { Table, tableMapperValues } from '@skeletonlabs/skeleton';
-	import type { TableSource } from '@skeletonlabs/skeleton';
-    import SvelteMarkdown from 'svelte-markdown';
+	import SvelteMarkdown from 'svelte-markdown';
+	import Time from 'svelte-time';
+	import prettyBytes from 'pretty-bytes';
+	import { type Readable, writable } from 'svelte/store';
+	import { DataHandler, Datatable, Th, ThFilter, type Row, type Field } from '@vincjo/datatables';
 
 	const girderUrl = 'https://girder.hub.yt/api/v1';
 
-	let collectionData: TableSource;
+	let handler: DataHandler;
+	let rows: Readable<any[]>;
+	let selected = writable<string>('');
+	let description = '';
 
 	async function getCollections() {
 		const response = await fetch(`${girderUrl}/collection`);
@@ -15,21 +21,6 @@
 		}
 
 		return await response.json();
-	}
-
-	function setTableSource(): TableSource {
-		return {
-			head: ['Name', 'Created', 'Size'],
-			body: tableMapperValues(collections, ['name', 'created', 'size']),
-			meta: tableMapperValues(collections, ['_id', 'name', 'created', 'size', 'description']),
-			foot: ['Total:', '', `${Object.values(collections).reduce((a, b) => a + b.size, 0)}`]
-		};
-	}
-
-	let description = '';
-
-	function selectRow(event: CustomEvent<TableMeta>): void {
-		description = event.detail[4];
 	}
 
 	import { onMount } from 'svelte';
@@ -54,8 +45,8 @@
 		} catch (error) {
 			console.error(error);
 		}
-		console.log(collections[0]);
-		collectionData = setTableSource();
+		handler = new DataHandler(collections, { rowsPerPage: 20 });
+		rows = handler.getRows();
 	});
 
 	import type { GirderCollection } from '$lib/girder';
@@ -72,17 +63,52 @@
 		console.log(`Number of folders: ${collectionDetails.nFolders}`);
 		console.log(`Size of the collection: ${collectionDetails.size} bytes`);
 	}
-	let tableSimple: TableSource;
-
-	$: tableSimple = collectionData ? setTableSource() : { body: [], head: [], meta: [], foot: [] };
 </script>
 
-<div class="container flex mx-auto p-8 space-y-8 w-full">
-	<h1>Collections</h1>
-	<div class="w-1/3 p-2 m-1">
-		<Table source={tableSimple} interactive on:selected={selectRow} />
+<div class="container flex mx-auto space-y-8 w-full">
+	<div class="w-1/2 p-2 m-2">
+		<h1 class="m-2">Collections</h1>
+		{#if handler}
+			<Datatable {handler}>
+				<table class="table table-hover table-compact table-auto w-full">
+					<thead>
+						<tr>
+							<Th {handler} orderBy="name">Name</Th>
+							<Th {handler} orderBy="created">Created</Th>
+							<Th {handler} orderBy="size">Size</Th>
+						</tr>
+						<tr>
+							<ThFilter {handler} filterBy="name" />
+							<ThFilter {handler} filterBy="created" />
+							<ThFilter {handler} filterBy="size" />
+						</tr>
+					</thead>
+					<tbody>
+						{#each $rows || [] as row}
+							<tr
+								class:bg-primary-active-token={$selected == row._id}
+								on:click={(e) => {
+									console.log($selected);
+									if ($selected == row._id) {
+										$selected = '';
+										description = '';
+									} else {
+										$selected = row._id;
+										description = row.description;
+									}
+								}}
+							>
+								<td>{row.name}</td>
+								<td><Time relative timestamp={row.created} /></td>
+								<td>{prettyBytes(row.size)}</td>
+							</tr>
+						{/each}
+					</tbody>
+				</table>
+			</Datatable>
+		{/if}
 	</div>
-	<div class="w-2/3 p-2 m-1">
+	<div class="w-1/2 p-2 m-1">
 		<SvelteMarkdown source={description} />
 	</div>
 </div>

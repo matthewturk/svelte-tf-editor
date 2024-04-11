@@ -41,7 +41,10 @@
   "type": "module",
   "dependencies": {
     "@floating-ui/dom": "1.5.4",
+    "@vincjo/datatables": "^1.14.5",
     "highlight.js": "11.9.0",
-    "svelte-markdown": "^0.4.1"
+    "pretty-bytes": "^6.1.1",
+    "svelte-markdown": "^0.4.1",
+    "svelte-time": "^0.8.3"
   }
 }
