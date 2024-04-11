@@ -4,7 +4,7 @@
 </script>
 <!-- YOU CAN DELETE EVERYTHING IN THIS PAGE -->
 
-<div class="container flex mx-auto p-8 space-y-8 w-full">
+<div class="container flex items-start mx-auto p-8 w-full">
 	<GaussianDisplay/>
 </div>
 
