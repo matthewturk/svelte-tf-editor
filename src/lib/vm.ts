@@ -1,4 +1,4 @@
-export interface VMInput {
+export interface IVMInput {
 	px: Float64Array;
 	py: Float64Array;
 	pdx: Float64Array;
