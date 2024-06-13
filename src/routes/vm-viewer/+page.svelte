@@ -2,6 +2,7 @@
 	import { type IVMInput } from '$lib/vm';
 	import VariableMesh from '$lib/VariableMesh.svelte';
 	import { onMount } from 'svelte';
+	import { Canvas, LayerCake } from 'layercake';
 
 	let min_val: number | undefined = undefined;
 	let max_val: number | undefined = undefined;
@@ -50,20 +51,24 @@
 	</div>
 	<div class="w-3/4 h-[500px] m-2 p-2">
 		{#if vmInput}
-			<VariableMesh
-				{vmInput}
-				{min_val}
-				{max_val}
-				{take_log}
-				{width}
-				{height}
-				{x_low}
-				{x_high}
-				{y_low}
-				{y_high}
-				{fieldName}
-				{colormapName}
-			/>
+			<div class="h-[500px] w-[500px]">
+				<LayerCake>
+					<Canvas>
+						<VariableMesh
+							{vmInput}
+							{min_val}
+							{max_val}
+							{take_log}
+							{x_low}
+							{x_high}
+							{y_low}
+							{y_high}
+							{fieldName}
+							{colormapName}
+						/></Canvas
+					>
+				</LayerCake>
+			</div>
 		{/if}
 	</div>
 </div>
