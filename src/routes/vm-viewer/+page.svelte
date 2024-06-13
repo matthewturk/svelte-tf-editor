@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { type IVMInput } from '$lib/vm';
 	import VariableMesh from '$lib/VariableMesh.svelte';
+	import MouseEventContainer from '$lib/MouseEventContainer.svelte';
 	import { onMount } from 'svelte';
 	import { Canvas, LayerCake } from 'layercake';
 
@@ -17,6 +18,9 @@
 	let colormapName = 'Viridis';
 
 	let vmInput: IVMInput;
+
+	let xDomain = [x_low, x_high];
+	let yDomain = [y_low, x_high];
 
 	async function fetchTypedArray(url: string): Promise<Float64Array> {
 		const response = await fetch(url);
@@ -52,20 +56,22 @@
 	<div class="w-3/4 h-[500px] m-2 p-2">
 		{#if vmInput}
 			<div class="h-[500px] w-[500px]">
-				<LayerCake>
-					<Canvas>
-						<VariableMesh
-							{vmInput}
-							{min_val}
-							{max_val}
-							{take_log}
-							{x_low}
-							{x_high}
-							{y_low}
-							{y_high}
-							{fieldName}
-							{colormapName}
-						/></Canvas
+				<LayerCake {xDomain} {yDomain}>
+					<MouseEventContainer>
+						<Canvas>
+							<VariableMesh
+								{vmInput}
+								{min_val}
+								{max_val}
+								{take_log}
+								{x_low}
+								{x_high}
+								{y_low}
+								{y_high}
+								{fieldName}
+								{colormapName}
+							/></Canvas
+						></MouseEventContainer
 					>
 				</LayerCake>
 			</div>
