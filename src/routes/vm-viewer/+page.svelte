@@ -4,6 +4,7 @@
 	import MouseEventContainer from '$lib/MouseEventContainer.svelte';
 	import { onMount } from 'svelte';
 	import { Canvas, LayerCake } from 'layercake';
+	import { colormaps } from '$lib/store';
 
 	let min_val: number | undefined = undefined;
 	let max_val: number | undefined = undefined;
@@ -57,6 +58,11 @@
 		</select>
 		<label for="take_log">Take log</label>
 		<input type="checkbox" name="take_log" class="checkbox" bind:checked={take_log} />
+		<select class="select" bind:value={colormapName}>
+			{#each Object.keys(colormaps) as colormap}
+				<option value={colormap}>{colormap}</option>
+			{/each}
+		</select>
 	</div>
 	<div class="w-3/4 h-[500px] m-2 p-2">
 		{#if vmInput}

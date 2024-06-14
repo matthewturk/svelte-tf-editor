@@ -10,7 +10,7 @@
 	let vm: VariableMesh;
 	export let min_val: number | undefined = undefined;
 	export let max_val: number | undefined = undefined;
-	export let take_log: boolean = false;
+	export let take_log: boolean = true;
 	export let x_low = 0.0;
 	export let x_high = 1.0;
 	export let y_low = 0.0;
@@ -22,7 +22,6 @@
 	let imageBuffer: Uint8Array;
 	let imageData: ImageData;
 	const knownFields: string[] = [];
-	let vmCanvas: HTMLCanvasElement;
 	const { width, height } = getContext('LayerCake');
 	const { ctx } = getContext('canvas');
 
@@ -55,6 +54,7 @@
 	}
 
 	$: {
+		console.log('Normalizing', colormapName);
 		$colormapCollection.normalize(colormapName, buffer, imageBuffer, min_val, max_val, take_log);
 		if (imageData) {
 			imageData.data.set(imageBuffer);
