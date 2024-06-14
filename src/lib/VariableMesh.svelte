@@ -44,22 +44,19 @@
 		imageBuffer = new Uint8Array($width * $height * 4);
 	}
 	$: {
-		console.log('Made FRB', $width, $height);
 		const frb = new FixedResolutionBuffer($width, $height, x_low, x_high, y_low, y_high);
 		frb.deposit(vm, buffer, fieldName);
+		buffer = buffer;
 	}
 	$: {
 		if ($ctx) {
-			console.log('image data');
 			imageData = $ctx.createImageData($width, $height);
 		}
 	}
 
 	$: {
 		$colormapCollection.normalize(colormapName, buffer, imageBuffer, min_val, max_val, take_log);
-		console.log('normalized');
 		if (imageData) {
-			console.log('setting data', $width, $height);
 			imageData.data.set(imageBuffer);
 			createImageBitmap(imageData).then((imageBitmap) => {
 				if ($ctx) {

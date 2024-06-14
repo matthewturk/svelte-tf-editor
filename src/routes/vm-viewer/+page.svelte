@@ -8,8 +8,6 @@
 	let min_val: number | undefined = undefined;
 	let max_val: number | undefined = undefined;
 	let take_log: boolean = false;
-	let width = 128;
-	let height = 128;
 	let x_low = 0.0;
 	let x_high = 1.0;
 	let y_low = 0.0;
@@ -19,8 +17,15 @@
 
 	let vmInput: IVMInput;
 
-	let xDomain = [x_low, x_high];
-	let yDomain = [y_low, x_high];
+	let xDomain: [number, number] = [0.0, 1.0];
+	let yDomain: [number, number] = [0.0, 1.0];
+
+	$: {
+		[x_low, x_high] = xDomain;
+	}
+	$: {
+		[y_low, y_high] = yDomain;
+	}
 
 	async function fetchTypedArray(url: string): Promise<Float64Array> {
 		const response = await fetch(url);
@@ -57,7 +62,7 @@
 		{#if vmInput}
 			<div class="h-[500px] w-[500px]">
 				<LayerCake {xDomain} {yDomain}>
-					<MouseEventContainer>
+					<MouseEventContainer bind:xDomain bind:yDomain>
 						<Canvas>
 							<VariableMesh
 								{vmInput}

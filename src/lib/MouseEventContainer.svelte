@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
 
-	const { xScale, yScale } = getContext('LayerCake');
+	const { xScale, yScale, width, height } = getContext('LayerCake');
 
-	let element;
+	let element: HTMLElement;
+	export let xDomain: [number, number];
+	export let yDomain: [number, number];
 
 	function handleClick(e) {
 		const rect = element.getBoundingClientRect();
@@ -22,40 +24,26 @@
 	}
 
 	function handleWheel(e: WheelEvent) {
-		console.log('handleWheel', e.deltaY, e.deltaMode);
-		const xBounds = $xScale.domain();
-		const yBounds = $yScale.domain();
-		const center = [(xBounds[0] + xBounds[1]) / 2, (yBounds[0] + yBounds[1]) / 2];
-		const view_width: [number, number] = [xBounds[1] - xBounds[0], yBounds[1] - yBounds[0]];
-		console.log(center, view_width);
+		const center = [(xDomain[0] + xDomain[1]) / 2, (yDomain[0] + yDomain[1]) / 2];
+		const view_width: [number, number] = [xDomain[1] - xDomain[0], yDomain[1] - yDomain[0]];
 		let n_units: number = 0;
 		if (e.deltaMode === e.DOM_DELTA_PIXEL) {
 			// let's say we have 9 units per image
-			console.log('dom delta pixel');
-			n_units = e.deltaY / (10 * view_width[0]);
+			n_units = e.deltaY / ($width / 10);
 		} else if (e.deltaMode === e.DOM_DELTA_LINE) {
 			// two lines per unit let's say
-			console.log('dom delta line');
 			n_units = e.deltaY / 2;
 		} else if (e.deltaMode === e.DOM_DELTA_PAGE) {
 			// yeah i don't know
-			console.log('dom delta page');
 			return;
 		}
 		const zoomFactor: number = 1.1 ** n_units;
-		console.log(zoomFactor, n_units);
 		const new_view_width: [number, number] = [
 			view_width[0] * zoomFactor,
 			view_width[1] * zoomFactor
 		];
-		console.log(xScale);
-		xScale.set(
-			$xScale.domain([center[0] - new_view_width[0] / 2, center[0] + new_view_width[0] / 2])
-		);
-		yScale.set(
-			$yScale.domain([center[1] - new_view_width[1] / 2, center[1] + new_view_width[1] / 2])
-		);
-		console.log($xScale.domain(), $yScale.domain());
+		xDomain = [center[0] - new_view_width[0] / 2, center[0] + new_view_width[0] / 2];
+		yDomain = [center[1] - new_view_width[1] / 2, center[1] + new_view_width[1] / 2];
 	}
 </script>
 
