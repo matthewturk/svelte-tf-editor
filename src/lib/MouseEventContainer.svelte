@@ -4,6 +4,10 @@
 	const { xScale, yScale, width, height } = getContext('LayerCake');
 
 	let element: HTMLElement;
+	let dragging: boolean = false;
+	let dragStart: [number, number] = [0, 0];
+	let dragStartCenter: [number, number] = [0.5, 0.5];
+
 	export let xDomain: [number, number];
 	export let yDomain: [number, number];
 
@@ -17,10 +21,28 @@
 
 	function startDrag(e: MouseEvent) {
 		console.log('startDrag', e.offsetX, e.offsetY);
+		dragging = true;
+		dragStart = [e.offsetX, e.offsetY];
+		dragStartCenter = [(xDomain[0] + xDomain[1]) / 2, (yDomain[0] + yDomain[1]) / 2];
 	}
 
 	function stopDrag(e: MouseEvent) {
 		console.log('stopDrag', e.offsetX, e.offsetY);
+		dragging = false;
+	}
+	function conductDrag(e: MouseEvent) {
+		if (!dragging) return;
+		const shiftValue: [number, number] = [e.offsetX - dragStart[0], e.offsetY - dragStart[1]];
+		// Now we shift the actual center
+		const view_width: [number, number] = [xDomain[1] - xDomain[0], yDomain[1] - yDomain[0]];
+		const dx = view_width[0] / $width; // note these are FRB dims, which are *pixel* dims, not display dims
+		const dy = -view_width[1] / $height; // origin is upper left, so flip dy
+		const new_view_center: [number, number] = [
+			dragStartCenter[0] - dx * shiftValue[0],
+			dragStartCenter[1] - dy * shiftValue[1]
+		];
+		xDomain = [new_view_center[0] - view_width[0] / 2, new_view_center[0] + view_width[0] / 2];
+		yDomain = [new_view_center[1] - view_width[1] / 2, new_view_center[1] + view_width[1] / 2];
 	}
 
 	function handleWheel(e: WheelEvent) {
@@ -47,13 +69,15 @@
 	}
 </script>
 
+<svelte:window on:mouseup={stopDrag} />
+
 <div
 	bind:this={element}
 	class="w-full h-full"
 	on:wheel={handleWheel}
 	on:click={handleClick}
 	on:mousedown={startDrag}
-	on:mouseup={stopDrag}
+	on:mousemove={conductDrag}
 >
 	<slot />
 </div>
