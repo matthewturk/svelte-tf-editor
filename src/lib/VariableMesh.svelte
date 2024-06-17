@@ -54,7 +54,6 @@
 	}
 
 	$: {
-		console.log('Normalizing', colormapName);
 		$colormapCollection.normalize(colormapName, buffer, imageBuffer, min_val, max_val, take_log);
 		if (imageData) {
 			imageData.data.set(imageBuffer);
