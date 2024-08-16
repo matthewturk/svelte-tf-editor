@@ -3,8 +3,9 @@
 	import VariableMesh from '$lib/VariableMesh.svelte';
 	import MouseEventContainer from '$lib/MouseEventContainer.svelte';
 	import { onMount } from 'svelte';
-	import { Canvas, LayerCake } from 'layercake';
+	import { Canvas, Axis, Chart, Svg } from 'layerchart';
 	import { colormaps } from '$lib/store';
+	import { SlideToggle } from '@skeletonlabs/skeleton';
 
 	let min_val: number | undefined = undefined;
 	let max_val: number | undefined = undefined;
@@ -56,18 +57,23 @@
 				{/each}
 			{/if}
 		</select>
-		<label for="take_log">Take log</label>
-		<input type="checkbox" name="take_log" class="checkbox" bind:checked={take_log} />
+		<SlideToggle name="take_log" bind:checked={take_log}>Take Log</SlideToggle>
 		<select class="select" bind:value={colormapName}>
 			{#each Object.keys(colormaps) as colormap}
 				<option value={colormap}>{colormap}</option>
 			{/each}
 		</select>
+		<div>{xDomain[0]} - {xDomain[1]}</div>
+		<div>{yDomain[0]} - {yDomain[1]}</div>
 	</div>
 	<div class="w-3/4 h-[500px] m-2 p-2">
 		{#if vmInput}
 			<div class="h-[500px] w-[500px]">
-				<LayerCake {xDomain} {yDomain}>
+				<Chart {xDomain} {yDomain} padding={{ right: 32, bottom: 32 }}>
+					<Svg
+						><Axis placement="right" rule />
+						<Axis placement="bottom" rule /></Svg
+					>
 					<MouseEventContainer bind:xDomain bind:yDomain>
 						<Canvas>
 							<VariableMesh
@@ -84,7 +90,7 @@
 							/></Canvas
 						></MouseEventContainer
 					>
-				</LayerCake>
+				</Chart>
 			</div>
 		{/if}
 	</div>
